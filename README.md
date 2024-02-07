@@ -17,7 +17,7 @@ This is a basic calculator application developed using C# and WPF (Windows Prese
 
 ## Getting Started
 
-1. Clone the repository: [https://technogit.alten.it/kalrifai/Calculator.git](https://technogit.alten.it/kalrifai/Calculator.git)
+1. Clone the repository: [https://github.com/khalidalrifai/Calculator.git](https://github.com/khalidalrifai/Calculator.git)
 
 2. Open the solution file (`SimpleCalculator.sln`) in Visual Studio.
 
@@ -44,7 +44,7 @@ Contributions are welcome! If you'd like to contribute to this project, please f
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://docs.gitlab.com/ee/development/licensing.html) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository) file for details.
 
 ## Acknowledgments
 
