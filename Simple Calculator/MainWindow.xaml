@@ -5,63 +5,200 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Simple_Calculator"
         mc:Ignorable="d"
-        Title="Standard Calculator" Height="450" Width="400">
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <!-- For Display -->
-            <RowDefinition Height="*"/>
-            <!-- For Buttons -->
-        </Grid.RowDefinitions>
+        Title="Standard Calculator" Height="550" Width="320"
+        KeyDown="KeyboardInputHandler">
 
-        <!-- Display -->
-        <TextBox x:Name="txtDisplay" Margin="0,0,0,10" FontSize="24" VerticalAlignment="Top" Height="80" HorizontalAlignment="Right" />
+    <!-- Resource Dictionary -->
+    <Window.Resources>
+        <!-- Base Button Style -->
+        <Style x:Key="BaseButtonStyle" TargetType="Button">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="#EEEEEE"/>
+            <Setter Property="Foreground" Value="#000000"/>
+            <Setter Property="BorderBrush" Value="#CCCCCC"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Height" Value="65"/>
+            <Setter Property="Width" Value="90"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E0E0E0"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#D0D0D0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
-        <!-- Buttons Grid -->
-        <Grid Grid.Row="1">
+
+
+        <!-- Calculator Button Style -->
+        <Style x:Key="CalculatorButtonStyle" TargetType="Button">
+            <!-- Common Button Style Setters -->
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Background" Value="#E8E8E8"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="BorderBrush" Value="#CCCCCC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="70"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="5">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="#F5F5F5" Offset="0"/>
+                                    <GradientStop Color="#E8E8E8" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect Color="#888888" Direction="270" ShadowDepth="2" BlurRadius="5" Opacity="0.5"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#D3D3D3"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <!-- Operation Button Style -->
+        <Style x:Key="CalculatorOperationButtonStyle" BasedOn="{StaticResource CalculatorButtonStyle}" TargetType="Button">
+            <!-- Operation Button Specific Setters -->
+            <Setter Property="Background" Value="#FFD700"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FFC107"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#FFA000"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+
+        <!-- Operator Button Style -->
+        <Style x:Key="OperatorButtonStyle" BasedOn="{StaticResource BaseButtonStyle}" TargetType="Button">
+            <Setter Property="Background" Value="#FFD700"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E0C100"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#C0A300"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <!-- Main Viewbox for Scaling -->
+    <Viewbox Stretch="Uniform">
+        <Grid Margin="10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="87*"/>
+                <ColumnDefinition Width="353*"/>
             </Grid.ColumnDefinitions>
-
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- For main display -->
+                <RowDefinition Height="Auto"/>
+                <!-- For history display -->
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <!-- Extra Row for Additional Buttons -->
+                <!-- For buttons grid -->
             </Grid.RowDefinitions>
 
-            <!-- Function Buttons -->
-            <Button Content="%" Grid.Row="0" Grid.Column="0" Click="PercentageButton_Click"/>
-            <Button Content="CE" Grid.Row="0" Grid.Column="1" Click="ClearEntryButton_Click"/>
-            <Button Content="C" Grid.Row="0" Grid.Column="2" Click="ClearButton_Click"/>
-            <Button Content="←" Grid.Row="0" Grid.Column="3" Click="BackspaceButton_Click"/>
-            <Button Content="." Grid.Row="5" Grid.Column="2" Click="DecimalButton_Click"/>
+            <!-- History Display -->
+            <TextBlock x:Name="txtHistory" Margin="5,0,5,0" FontSize="24" FontWeight="Bold" Height="40"
+                       Foreground="Gray"
+                       TextAlignment="Right" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
 
-            <!-- Number Buttons -->
-            <Button Content="7" Grid.Row="2" Grid.Column="0" Click="NumberButton_Click"/>
-            <Button Content="8" Grid.Row="2" Grid.Column="1" Click="NumberButton_Click"/>
-            <Button Content="9" Grid.Row="2" Grid.Column="2" Click="NumberButton_Click"/>
-            <Button Content="4" Grid.Row="3" Grid.Column="0" Click="NumberButton_Click"/>
-            <Button Content="5" Grid.Row="3" Grid.Column="1" Click="NumberButton_Click"/>
-            <Button Content="6" Grid.Row="3" Grid.Column="2" Click="NumberButton_Click"/>
-            <Button Content="1" Grid.Row="4" Grid.Column="0" Click="NumberButton_Click"/>
-            <Button Content="2" Grid.Row="4" Grid.Column="1" Click="NumberButton_Click"/>
-            <Button Content="3" Grid.Row="4" Grid.Column="2" Click="NumberButton_Click"/>
-            <Button Content="0" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Click="NumberButton_Click"/>
-            <!-- 0 Button Spanning 2 Columns -->
+            <!-- Main Display -->
+            <TextBox x:Name="txtDisplay" Grid.Row="1" Margin="5,0,5,0" FontSize="48" FontWeight="Bold" Height="120"
+                     Background="#F5F5F5" Foreground="Black" BorderBrush="Gray" BorderThickness="1"
+                     VerticalAlignment="Center"
+                     TextAlignment="Right" Padding="10" IsReadOnly="True"
+                     AutomationProperties.Name="Calculator Display" Grid.ColumnSpan="2"/>
 
-            <!-- Operation Buttons -->
-            <Button Content="÷" Grid.Row="1" Grid.Column="3" Click="OperationButton_Click"/>
-            <Button Content="×" Grid.Row="2" Grid.Column="3" Click="OperationButton_Click"/>
-            <Button Content="-" Grid.Row="3" Grid.Column="3" Click="OperationButton_Click"/>
-            <Button Content="+" Grid.Row="4" Grid.Column="3" Click="OperationButton_Click"/>
-            <Button Content="=" Grid.Row="5" Grid.Column="3" Click="EqualButton_Click"/>
+            <!-- Error Display -->
+            <TextBlock x:Name="txtError" Grid.Row="2" Foreground="Red" Margin="343,10,0,10" FontWeight="Bold" 
+                       HorizontalAlignment="Left" Visibility="Collapsed"
+                       AutomationProperties.Name="Error Display" Grid.Column="1"/>
+
+
+            <!-- Buttons Grid -->
+            <Grid Grid.Row="2" Grid.ColumnSpan="2">
+                <!-- Grid Column and Row Definitions -->
+                <Grid.ColumnDefinitions>
+                    <!-- Column Definitions -->
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- Row Definitions -->
+                    <!-- For memory buttons -->
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Memory Buttons -->
+                <Button Content="MC" Grid.Row="0" Grid.Column="0" Click="MemoryClearButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="MR" Grid.Row="0" Grid.Column="1" Click="MemoryRecallButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="MS" Grid.Row="0" Grid.Column="2" Click="MemoryStoreButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="M+" Grid.Row="0" Grid.Column="3" Click="MemoryAddButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+
+                <!-- Function Buttons -->
+                <Button Content="%" Grid.Row="1" Grid.Column="0" Click="PercentageButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="CE" Grid.Row="1" Grid.Column="1" Click="ClearEntryButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="C" Grid.Row="1" Grid.Column="2" Click="ClearButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="←" Grid.Row="1" Grid.Column="3" Click="BackspaceButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="1/x" Grid.Row="2" Grid.Column="0" Click="ReciprocalButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="x²" Grid.Row="2" Grid.Column="1" Click="SquareButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="√x" Grid.Row="2" Grid.Column="2" Click="SquareRootButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="±" Grid.Row="6" Grid.Column="0" Click="PlusMinusButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="." Grid.Row="6" Grid.Column="2" Click="DecimalButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+
+                <!-- Number Buttons -->
+                <Button Content="7" Grid.Row="3" Grid.Column="0" Click="NumberButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="8" Grid.Row="3" Grid.Column="1" Click="NumberButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="9" Grid.Row="3" Grid.Column="2" Click="NumberButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="4" Grid.Row="4" Grid.Column="0" Click="NumberButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="5" Grid.Row="4" Grid.Column="1" Click="NumberButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="6" Grid.Row="4" Grid.Column="2" Click="NumberButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="1" Grid.Row="5" Grid.Column="0" Click="NumberButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="2" Grid.Row="5" Grid.Column="1" Click="NumberButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="3" Grid.Row="5" Grid.Column="2" Click="NumberButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+                <Button Content="0" Grid.Row="6" Grid.Column="1" Click="NumberButton_Click" Style="{StaticResource CalculatorButtonStyle}"/>
+
+                <!-- Operation Buttons -->
+                <Button Content="÷" Grid.Row="2" Grid.Column="3" Click="OperationButton_Click" Style="{StaticResource CalculatorOperationButtonStyle}"/>
+                <Button Content="×" Grid.Row="3" Grid.Column="3" Click="OperationButton_Click" Style="{StaticResource CalculatorOperationButtonStyle}"/>
+                <Button Content="-" Grid.Row="4" Grid.Column="3" Click="OperationButton_Click" Style="{StaticResource CalculatorOperationButtonStyle}"/>
+                <Button Content="+" Grid.Row="5" Grid.Column="3" Click="OperationButton_Click" Style="{StaticResource CalculatorOperationButtonStyle}"/>
+                <Button Content="=" Grid.Row="6" Grid.Column="3" Click="EqualButton_Click" Style="{StaticResource CalculatorOperationButtonStyle}"/>
+            </Grid>
         </Grid>
-    </Grid>
+    </Viewbox>
 </Window>
