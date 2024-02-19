@@ -62,10 +62,10 @@ For developers interested in contributing or exploring the code:
 ## Screenshots
 
 1. Initial State:
-![Main UI](/images/Simple_Calculator_Initial_State.png "Initial State")
+![Main UI](images/Simple Calculator Initial State.png "Initial State")
 
 2. Processing State:
-![Main UI After Processing](/images/Simple_Calculator_Process_State.png "Processing State")
+![Main UI After Processing](images/Simple Calculator Process State.png "Processing State")
 
 
 ## Contributing
